@@ -1,26 +1,52 @@
-import React from 'react';
+import React,{Component} from 'react';
+import CardList from './CardList';
 import logo from './logo.svg';
 import './App.css';
-
-function App() {
-  return (
+import SearchBox from './SearchBox';
+import Scroll from './Scroll';
+import Button from './Button';
+class App extends Component{
+  constructor()
+  {
+       super();
+       this.state = {
+           monsters:[],
+           searchfield:''
+       }
+  }
+  componentDidMount()
+  {
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then(res =>res.json())
+    .then(users =>this.setState({monsters:users}))
+  }
+  onSearchChange =(event)=>
+  {
+      console.log(event.target.value)
+      this.setState({searchfield:event.target.value})
+  }
+  onClick =() =>
+  {
+    console.log('Clicked Me')
+  }
+  render()
+  {
+    const FilterMonsters = this.state.monsters.filter(monster=>monster.name.toLowerCase().includes(this.state.searchfield.toLowerCase()))
+      const {monsters} = this.state;
+      return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+         <h1>Monsters-Rolodex</h1>
+         <span><SearchBox onChange={this.onSearchChange} /><Button onClick={this.onClick} /></span>
+        <Scroll>
+           <CardList monsters={FilterMonsters}>
+           </CardList>
+        </Scroll>
+         
+
     </div>
   );
+  }
+
 }
 
 export default App;
